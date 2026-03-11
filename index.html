@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguridad en Preparación de Medicamentos</title>
+    <!-- Tailwind CSS para el diseño -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+        }
+        /* Animación suave para los iconos */
+        .icon-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 p-4 md:p-8 min-h-screen flex flex-col">
+
+    <header class="max-w-7xl mx-auto w-full text-center mb-8 shrink-0">
+        <h1 class="text-3xl md:text-5xl font-black text-blue-900 uppercase tracking-tight mb-2">
+            Seguridad en la preparación de medicamentos
+        </h1>
+        <div class="h-1.5 w-32 bg-blue-600 mx-auto rounded-full"></div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow relative">
+        
+        <!-- COLUMNA 1: TÉCNICA ASÉPTICA Y CÁLCULOS -->
+        <div class="lg:col-span-2 space-y-6 flex flex-col">
+            
+            <!-- Tarjeta Técnica Aséptica -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-fit">
+                <div class="bg-blue-900 p-4 flex items-center gap-3 shrink-0">
+                    <i data-lucide="waves" class="text-blue-300"></i>
+                    <h2 class="text-white font-black uppercase text-sm tracking-wider">Técnica Aséptica y Desinfección</h2>
+                </div>
+                
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 text-blue-700">
+                                <i data-lucide="hand-metal" size="20"></i>
+                                <h3 class="font-black text-xs uppercase">1. Higiene de Manos</h3>
+                            </div>
+                            <p class="text-[11px] text-slate-600 leading-relaxed font-medium">
+                                Lavado clínico obligatorio antes de manipular insumos. Elimina flora transitoria.
+                            </p>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 text-emerald-600">
+                                <i data-lucide="check-circle-2" size="20"></i>
+                                <h3 class="font-black text-xs uppercase">2. Guantes sin talco</h3>
+                            </div>
+                            <p class="text-[11px] text-slate-600 leading-relaxed font-medium">
+                                Uso obligatorio para toda manipulación. Protege la mezcla y al personal.
+                            </p>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 text-emerald-600">
+                                <i data-lucide="spray-can" size="20"></i>
+                                <h3 class="font-black text-xs uppercase">3. Superficies</h3>
+                            </div>
+                            <p class="text-[11px] text-slate-600 leading-relaxed font-medium">
+                                Desinfectar con <strong>alcohol al 70%</strong> antes de disponer los insumos. Recuerda hacerlo en una sola dirección sin sobrepasar por áreas ya desinfectadas.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 relative overflow-hidden">
+                        <div class="relative z-10">
+                            <div class="flex items-center gap-3 mb-3 text-blue-800">
+                                <i data-lucide="droplets" size="22"></i>
+                                <h3 class="font-black text-sm uppercase">Limpieza de Viales y Ampollas</h3>
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed">
+                                Utilizar un <strong>pañín</strong> impregnado con alcohol al 70%. Realizar técnica de <strong>fricción mecánica</strong> sobre el tapón de caucho o el cuello de la ampolla antes de la apertura o inserción de la aguja.
+                            </p>
+                        </div>
+                        <i data-lucide="beaker" class="absolute -right-4 -bottom-4 text-blue-200/40 w-24 h-24 rotate-12"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta Cálculos -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden h-fit">
+                <div class="bg-slate-800 p-4 flex items-center gap-3">
+                    <i data-lucide="calculator" class="text-blue-400"></i>
+                    <h2 class="text-white font-black uppercase text-sm tracking-wider">Cálculo de Concentración y Dosis</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+                            <p class="text-[10px] font-black text-slate-400 uppercase mb-2">Fórmula de Concentración</p>
+                            <div class="text-lg font-black text-slate-800 flex flex-col items-center">
+                                <span>Cantidad (mg)</span>
+                                <div class="w-24 h-0.5 bg-slate-300 my-1"></div>
+                                <span>Volumen (mL)</span>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 text-center">
+                            <p class="text-[10px] font-black text-blue-400 uppercase mb-2">Fórmula de Dosis</p>
+                            <div class="text-lg font-black text-blue-900 flex flex-col items-center">
+                                <span>Dosis Ordenada (mg)</span>
+                                <div class="w-24 h-0.5 bg-blue-300 my-1"></div>
+                                <span>Concentración (mg/mL)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ESPACIO DE RELLENO CON ICONO DE JERINGA -->
+            <div class="hidden lg:flex flex-grow items-center justify-center opacity-10">
+                <i data-lucide="syringe" class="w-64 h-64 icon-float -rotate-45"></i>
+            </div>
+        </div>
+
+        <!-- COLUMNA 2: MATRIZ Y PUNTOS CRÍTICOS -->
+        <div class="space-y-6 flex flex-col">
+            
+            <!-- CONTENEDOR DE MATRIZ Y SOPORTE -->
+            <div class="bg-white rounded-3xl shadow-xl border border-blue-200 overflow-hidden flex flex-col h-fit">
+                <div class="bg-blue-900 p-5 text-white">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i data-lucide="qr-code" size="28" class="text-blue-300"></i>
+                        <h2 class="font-black uppercase text-xs tracking-widest leading-none">1. Primer Paso: Matriz de Riesgo</h2>
+                    </div>
+                    <p class="text-[10px] font-bold text-blue-100 mb-3">Consulte obligatoriamente el código QR para:</p>
+                    <div class="grid grid-cols-1 gap-1.5">
+                        <div class="bg-blue-800/50 p-2 rounded-lg flex items-center gap-2 text-[9px] font-black uppercase">
+                            <i data-lucide="search" size="14" class="text-blue-300"></i> Concentraciones y Dilución
+                        </div>
+                        <div class="bg-blue-800/50 p-2 rounded-lg flex items-center gap-2 text-[9px] font-black uppercase">
+                            <i data-lucide="layers" size="14" class="text-blue-300"></i> Medicamentos que se adaptan a las salinas con adaptador
+                        </div>
+                        <div class="bg-blue-800/50 p-2 rounded-lg flex items-center gap-2 text-[9px] font-black uppercase">
+                            <i data-lucide="clock" size="14" class="text-blue-300"></i> Estabilidad
+                        </div>
+                        <div class="bg-blue-800/50 p-2 rounded-lg flex items-center gap-2 text-[9px] font-black uppercase">
+                            <i data-lucide="sun" size="14" class="text-blue-300"></i> Fotosensibilidad
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-5 bg-emerald-50 border-t border-blue-100">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i data-lucide="arrow-right" size="16" class="text-blue-500"></i>
+                        <h3 class="font-black uppercase text-[10px] text-blue-900 italic">¿No está en la matriz o dudas?</h3>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl border border-emerald-200 shadow-sm flex items-center justify-between mb-3 hover:border-emerald-400 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="phone" size="24" class="text-emerald-600"></i>
+                            <div>
+                                <p class="font-black text-emerald-900 text-xs uppercase leading-none">Central Mezclas</p>
+                                <p class="text-[9px] text-emerald-600 font-bold uppercase mt-1 tracking-widest">Ext. 3156</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-[9px] text-slate-600 leading-tight font-medium bg-white/50 p-2 rounded-lg border border-emerald-100">
+                        Informar oportunamente el <strong>cambio o suspensión</strong> de medicamentos preparados por Central.
+                    </p>
+                </div>
+            </div>
+
+            <!-- PUNTOS CRÍTICOS -->
+            <div class="bg-white rounded-3xl shadow-md border border-red-100 overflow-hidden flex flex-col h-fit">
+                <div class="bg-red-700 p-4 flex items-center gap-3 shrink-0">
+                    <i data-lucide="zap" class="text-red-200"></i>
+                    <h2 class="text-white font-black uppercase text-sm tracking-wider">Puntos Críticos</h2>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div class="p-3 bg-red-50 rounded-xl border border-red-100">
+                        <div class="flex items-center gap-2 mb-1 text-red-700">
+                            <i data-lucide="shield-alert" size="16"></i>
+                            <h4 class="text-[10px] font-black uppercase leading-none">Solo un medicamento a la vez</h4>
+                        </div>
+                        <p class="text-[10px] text-slate-600 font-bold leading-tight">Previene confusiones y errores. Evite interrupciones.</p>
+                    </div>
+
+                    <div class="p-3 bg-blue-50 rounded-xl border border-blue-100">
+                        <div class="flex items-center gap-2 mb-1 text-blue-700">
+                            <i data-lucide="target" size="16"></i>
+                            <h4 class="text-[10px] font-black uppercase leading-none">Uso de Jeringas</h4>
+                        </div>
+                        <p class="text-[10px] text-slate-600 font-bold leading-tight">Cubra la aguja al eliminar aire. Use la jeringa más cercana al volumen requerido.</p>
+                    </div>
+
+                    <div class="flex items-start gap-3 px-1 text-[10px] text-slate-600 font-bold pt-2">
+                        <i data-lucide="tag" class="text-blue-600 shrink-0" size="16"></i>
+                        <span>Rotular <strong>inmediatamente</strong> tras preparar.</span>
+                    </div>
+
+                    <div class="flex items-start gap-3 px-1 border-t border-slate-100 pt-3 text-[10px] text-slate-500 font-bold italic">
+                        <i data-lucide="trash-2" size="16" class="shrink-0"></i>
+                        <span>Descartar remanentes según plan de residuos.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALERTA FINAL -->
+            <div class="bg-orange-600 rounded-3xl p-5 text-white shadow-lg shrink-0">
+                <div class="flex items-center gap-2 mb-3">
+                    <i data-lucide="alert-triangle" size="20" class="text-orange-200"></i>
+                    <h3 class="font-black text-[10px] uppercase tracking-widest italic">Detenga la Administración si:</h3>
+                </div>
+                <ul class="text-[10px] space-y-1 font-black grid grid-cols-1">
+                    <li>• Cambio de color</li>
+                    <li>• Turbidez visible</li>
+                    <li>• Precipitado o Cristales</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-7xl mx-auto w-full mt-8 pt-6 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4 shrink-0 pb-4">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Christus Sinergia</p>
+    </footer>
+
+    <!-- Inicializar los iconos de Lucide -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
