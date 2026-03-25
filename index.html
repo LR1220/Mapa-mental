@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Mental - Atributos de la Personalidad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #f8fafc;
+        }
+
+        .canvas-container {
+            width: 100vw;
+            height: 100vh;
+            cursor: grab;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .canvas-container:active {
+            cursor: grabbing;
+        }
+
+        #canvas {
+            position: absolute;
+            transform-origin: center;
+            width: 1500px;
+            height: 1500px;
+            left: calc(50% - 750px);
+            top: calc(50% - 750px);
+            transition: transform 0.1s ease-out;
+        }
+
+        .node-card {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            transition: transform 0.2s ease;
+            user-select: none;
+        }
+
+        .node-card:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        .line {
+            stroke: #cbd5e1;
+            stroke-width: 2;
+            transition: stroke 0.3s, stroke-width 0.3s;
+        }
+
+        .line.active {
+            stroke: #3b82f6;
+            stroke-width: 4;
+        }
+
+        /* Side Panel */
+        #side-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 384px;
+            height: 100%;
+            background: white;
+            box-shadow: -10px 0 25px rgba(0,0,0,0.1);
+            transition: right 0.3s ease-in-out;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #side-panel.open {
+            right: 0;
+        }
+
+        /* References Modal */
+        #ref-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #ref-modal.open {
+            display: flex;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="canvas-container" id="container">
+        <!-- HUD Controls -->
+        <div class="fixed top-6 left-6 z-50 flex flex-col gap-2">
+            <div class="bg-white p-2 rounded-xl shadow-lg border border-slate-200 flex flex-col gap-2">
+                <button onclick="adjustZoom(0.1)" class="p-2 hover:bg-slate-100 rounded-lg text-slate-600" title="Acercar">
+                    <i data-lucide="maximize-2"></i>
+                </button>
+                <button onclick="adjustZoom(-0.1)" class="p-2 hover:bg-slate-100 rounded-lg text-slate-600" title="Alejar">
+                    <i data-lucide="minimize-2"></i>
+                </button>
+                <button onclick="resetView()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-600" title="Resetear">
+                    <i data-lucide="mouse-pointer-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="canvas">
+            <svg id="svg-connections" class="absolute inset-0 w-full h-full pointer-events-none"></svg>
+            <div id="nodes-container"></div>
+        </div>
+
+        <!-- References Button -->
+        <button onclick="toggleRefs(true)" class="fixed bottom-6 right-6 z-50 bg-amber-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-amber-700 transition-all font-bold flex items-center gap-2">
+            <i data-lucide="book-open"></i>
+            <span>Referencias Normativas</span>
+        </button>
+    </div>
+
+    <!-- Side Panel -->
+    <div id="side-panel">
+        <div id="panel-header" class="p-6 text-white flex justify-between items-start">
+            <div>
+                <p class="text-xs font-bold opacity-80 uppercase mb-1">Ficha Técnica</p>
+                <h2 id="panel-title" class="text-2xl font-black">Nombre</h2>
+            </div>
+            <button onclick="closePanel()" class="p-1 hover:bg-white/20 rounded-lg"><i data-lucide="x"></i></button>
+        </div>
+        <div class="p-8 flex-1 overflow-y-auto space-y-8 custom-scrollbar">
+            <section class="space-y-3">
+                <h4 class="text-slate-400 font-bold uppercase text-xs flex items-center gap-2 tracking-widest">
+                    <i data-lucide="info" class="w-4 h-4"></i> Concepto
+                </h4>
+                <p id="panel-content" class="text-slate-700 leading-relaxed font-medium text-justify"></p>
+            </section>
+            <section id="panel-example-container" class="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-3">
+                <h4 class="text-blue-600 font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span> Ejemplo
+                </h4>
+                <p id="panel-example" class="text-slate-600 italic text-sm leading-relaxed"></p>
+            </section>
+        </div>
+    </div>
+
+    <!-- References Modal -->
+    <div id="ref-modal" onclick="toggleRefs(false)">
+        <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]" onclick="event.stopPropagation()">
+            <div class="bg-amber-500 p-6 text-white flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="book-open"></i>
+                    <h3 class="text-xl font-bold uppercase tracking-tight">Referencias Normativas</h3>
+                </div>
+                <button onclick="toggleRefs(false)" class="p-2 hover:bg-white/20 rounded-full"><i data-lucide="x"></i></button>
+            </div>
+            <div id="ref-list" class="p-8 overflow-y-auto space-y-4 custom-scrollbar">
+                <!-- Filled via JS -->
+            </div>
+            <div class="p-6 bg-slate-50 text-center">
+                <button onclick="toggleRefs(false)" class="px-8 py-2 bg-slate-800 text-white rounded-full font-bold">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const center = { x: 750, y: 750 };
+        const nodes = [
+            {
+                id: 'center',
+                title: 'Atributos de la Personalidad',
+                color: 'bg-red-600',
+                textColor: 'text-white',
+                borderColor: 'border-red-700',
+                x: center.x, 
+                y: center.y, 
+                width: 450,
+                icon: 'scale',
+                isStatic: true,
+                content: 'Los atributos de la personalidad jurídica son esas cualidades esenciales que convierten a una persona, ya sea natural o de existencia legal como una empresa, en un sujeto activo dentro del mundo del derecho colombiano.'
+            },
+            {
+                id: 'nombre',
+                title: 'Nombre',
+                color: 'bg-emerald-500',
+                textColor: 'text-white',
+                borderColor: 'border-emerald-600',
+                x: 350, y: 400, width: 280, icon: 'type',
+                content: 'Es el signo distintivo que permite identificar e individualizar a una persona en la sociedad. Está compuesto por el nombre de pila y los apellidos (filiación).',
+                example: 'En Colombia, el nombre es un derecho fundamental. Un ciudadano puede cambiar su nombre por una sola vez mediante escritura pública ante notario si desea modificar su identidad.'
+            },
+            {
+                id: 'capacidad',
+                title: 'Capacidad',
+                color: 'bg-blue-500',
+                textColor: 'text-white',
+                borderColor: 'border-blue-600',
+                x: 1150, y: 400, width: 280, icon: 'key',
+                content: 'Es la aptitud legal para ser sujeto de derechos y obligaciones, y para ejercerlos por sí mismo. Se divide en capacidad de goce (que todos tenemos al nacer) y capacidad de ejercicio.',
+                example: 'En Colombia, según la Ley 1996 de 2019, las personas con discapacidad tienen plena capacidad legal y pueden acceder a apoyos para la toma de decisiones, eliminando la interdicción.'
+            },
+            {
+                id: 'domicilio',
+                title: 'Domicilio',
+                color: 'bg-orange-500',
+                textColor: 'text-white',
+                borderColor: 'border-orange-600',
+                x: 350, y: 750, width: 280, icon: 'map-pin',
+                content: 'Es el lugar donde una persona reside con el ánimo real o presunto de permanecer en él. Es la sede jurídica donde se le puede localizar para efectos legales.',
+                example: 'Una empresa cuya sede principal de negocios está en Medellín tiene allí su domicilio contractual y legal, independientemente de que tenga sucursales en otras ciudades de Colombia.'
+            },
+            {
+                id: 'estadoCivil',
+                title: 'Estado Civil',
+                color: 'bg-pink-400',
+                textColor: 'text-white',
+                borderColor: 'border-pink-500',
+                x: 1150, y: 750, width: 280, icon: 'users',
+                content: 'Es la situación jurídica de una persona frente a su familia y la sociedad. Determina derechos y deberes, es indivisible, indisponible e imprescriptible.',
+                example: 'En el derecho colombiano, el estado civil de "compañero permanente" se declara tras dos años de convivencia para efectos de la sociedad patrimonial.'
+            },
+            {
+                id: 'nacionalidad',
+                title: 'Nacionalidad',
+                color: 'bg-purple-600',
+                textColor: 'text-white',
+                borderColor: 'border-purple-700',
+                x: 350, y: 1100, width: 280, icon: 'globe',
+                content: 'Es el vínculo jurídico, político y social que une a una persona con el Estado. Puede ser por nacimiento (ius soli o ius sanguinis) o por adopción.',
+                example: 'Un niño nacido en el extranjero hijo de padres colombianos adquiere la nacionalidad colombiana por nacimiento una vez se inscriba en el consulado o registraduría.'
+            },
+            {
+                id: 'patrimonio',
+                title: 'Patrimonio',
+                color: 'bg-slate-600',
+                textColor: 'text-white',
+                borderColor: 'border-slate-700',
+                x: 1150, y: 1100, width: 280, icon: 'briefcase',
+                content: 'Es el conjunto de bienes, derechos y obligaciones apreciables en dinero que pertenecen a una persona natural o jurídica. Constituye la prenda general de los acreedores.',
+                example: 'En Colombia, el patrimonio de familia inembargable permite proteger la vivienda principal de deudas u obligaciones financieras para garantizar el techo familiar.'
+            }
+        ];
+
+        const references = [
+            "Congreso de la República de Colombia. (1887). Ley 57 de 1887, Código Civil Colombiano. Diario Oficial No. 7.019.",
+            "Congreso de la República de Colombia. (1991). Constitución Política de Colombia [Const]. (2da ed.). Legis.",
+            "Congreso de la República de Colombia. (2005, 17 de agosto). Ley 962 de 2005. Por la cual se dictan disposiciones sobre racionalización de trámites y procedimientos administrativos. Diario Oficial No. 46.004.",
+            "Corte Constitucional de Colombia. (1998, 22 de enero). Sentencia C-004/98 [M.P. Jorge Arango Mejía].",
+            "Corte Constitucional de Colombia. (2002, 13 de noviembre). Sentencia C-983/02 [M.P. Jaime Córdoba Triviño].",
+            "Corte Constitucional de Colombia. (2018, 20 de junio). Sentencia T-241/18 [M.P. Alberto Rojas Ríos].",
+            "Presidencia de la República de Colombia. (1970, 27 de julio). Decreto 1260 de 1970. Por el cual se estatuye el Estatuto del Registro del Estado Civil de las personas. Diario Oficial No. 33.144."
+        ];
+
+        let zoom = 0.8;
+        let pos = { x: 0, y: 0 };
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+
+        const canvas = document.getElementById('canvas');
+        const container = document.getElementById('container');
+        const svg = document.getElementById('svg-connections');
+        const nodesContainer = document.getElementById('nodes-container');
+
+        // Initialization
+        function init() {
+            renderNodes();
+            renderLines();
+            renderRefs();
+            updateTransform();
+            lucide.createIcons();
+        }
+
+        function renderNodes() {
+            nodesContainer.innerHTML = nodes.map(node => `
+                <div class="node-card" id="node-${node.id}" 
+                     style="left: ${node.x}px; top: ${node.y}px; width: ${node.width}px;"
+                     onclick="handleNodeClick('${node.id}')">
+                    <div class="rounded-2xl shadow-xl border-2 overflow-hidden bg-white ${node.borderColor}">
+                        <div class="p-4 flex items-center gap-3 ${node.color} ${node.textColor}">
+                            <i data-lucide="${node.icon}" class="${node.id === 'center' ? 'w-6 h-6' : 'w-5 h-5'}"></i>
+                            <h3 class="font-bold leading-tight ${node.id === 'center' ? 'text-lg' : ''}">${node.title}</h3>
+                        </div>
+                        ${node.id === 'center' ? `
+                            <div class="p-4 bg-white">
+                                <p class="text-sm text-slate-700 text-center leading-relaxed font-medium">
+                                    ${node.content}
+                                </p>
+                            </div>
+                        ` : `
+                            <div class="p-3 text-[10px] text-slate-400 text-center bg-slate-50 border-t border-slate-100 uppercase font-bold tracking-wider">
+                                Ver Concepto y Ejemplo
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderLines() {
+            svg.innerHTML = nodes.filter(n => n.id !== 'center').map(node => `
+                <line id="line-${node.id}" class="line" 
+                      x1="${center.x}" y1="${center.y}" 
+                      x2="${node.x}" y2="${node.y}" />
+            `).join('');
+        }
+
+        function renderRefs() {
+            const list = document.getElementById('ref-list');
+            list.innerHTML = references.map(ref => `
+                <div class="pl-6 -indent-6 text-sm text-slate-700 leading-relaxed border-b border-slate-50 pb-3 last:border-0">
+                    ${ref}
+                </div>
+            `).join('');
+        }
+
+        function handleNodeClick(id) {
+            const node = nodes.find(n => n.id === id);
+            if (!node || node.id === 'center') return;
+
+            // Update panel content
+            document.getElementById('panel-title').innerText = node.title;
+            document.getElementById('panel-content').innerText = node.content;
+            document.getElementById('panel-example').innerText = `"${node.example}"`;
+            document.getElementById('panel-header').className = `p-6 ${node.color} text-white flex justify-between items-start`;
+            
+            // Highlight Line
+            document.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+            document.getElementById(`line-${id}`).classList.add('active');
+
+            // Open Panel
+            document.getElementById('side-panel').classList.add('open');
+            lucide.createIcons();
+        }
+
+        function closePanel() {
+            document.getElementById('side-panel').classList.remove('open');
+            document.querySelectorAll('.line').forEach(l => l.classList.remove('active'));
+        }
+
+        function toggleRefs(show) {
+            document.getElementById('ref-modal').classList.toggle('open', show);
+        }
+
+        // Pan & Zoom Logic
+        container.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.node-card')) return;
+            isDragging = true;
+            dragStart = { x: e.clientX - pos.x, y: e.clientY - pos.y };
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            pos.x = e.clientX - dragStart.x;
+            pos.y = e.clientY - dragStart.y;
+            updateTransform();
+        });
+
+        window.addEventListener('mouseup', () => isDragging = false);
+
+        function adjustZoom(delta) {
+            zoom = Math.max(0.4, Math.min(1.5, zoom + delta));
+            updateTransform();
+        }
+
+        function resetView() {
+            zoom = 0.8;
+            pos = { x: 0, y: 0 };
+            closePanel();
+            updateTransform();
+        }
+
+        function updateTransform() {
+            canvas.style.transform = `translate(${pos.x}px, ${pos.y}px) scale(${zoom})`;
+        }
+
+        // Init on load
+        window.onload = init;
+    </script>
+</body>
+</html>
